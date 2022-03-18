@@ -231,10 +231,15 @@ function onDeleteSelected() {
   if (features.getLength()) {
     source = drawLayer.getFeatureStore();
     features.forEach((feature) => {
-      const coords = feature.getGeometry().getCoordinates();
-      mapstateMarkers = mapstateMarkers.filter((marker) => marker.coords[0] !== coords[0] && marker.coords[1] !== coords[1]);
-      const coordsId = createCoordsId(coords);
-      document.querySelector(`#o-popup-${coordsId}`).remove();
+      if (feature.getGeometry().getType() === 'Point') {
+        const coords = feature.getGeometry().getCoordinates();
+        mapstateMarkers = mapstateMarkers.filter((marker) => marker.coords[0] !== coords[0] && marker.coords[1] !== coords[1]);
+        const coordsId = createCoordsId(coords);
+        const el = document.querySelector(`#o-popup-${coordsId}`);
+        if (el) {
+          el.remove();
+        }
+      }
       source.removeFeature(feature);
     });
     select.getFeatures().clear();
